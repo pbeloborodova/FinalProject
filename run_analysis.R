@@ -143,4 +143,4 @@ tidy_data <-
 
 # Save data in .txt file
 write.table(tidy_data, "tidy_data.txt", sep = " ", dec = ".",
-            row.names = TRUE, col.names = TRUE)
+            row.names = FALSE, col.names = TRUE)
