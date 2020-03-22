@@ -1,0 +1,137 @@
+---
+title: "Codebook"
+output: 
+  html_document: 
+    fig_height: 4
+    highlight: pygments
+    theme: spacelab
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Data description
+
+__About the study (abridged from the original README file):__
+
+The experiments have been carried out with a group of 30 volunteers within an age bracket of 19-48 years. Each person performed six activities (WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING) wearing a smartphone (Samsung Galaxy S II) on the waist. Using its embedded accelerometer and gyroscope, 3-axial linear acceleration and 3-axial angular velocity at a constant rate of 50Hz were captured.
+The obtained dataset has been randomly partitioned into two sets, where 70% of the volunteers was selected for generating the training data and 30% the test data. The sensor signals were pre-processed and used to espimate a set of variables (inculding means and standard deviations).
+
+__Source:__
+
+Davide Anguita, Alessandro Ghio, Luca Oneto, Xavier Parra and Jorge L. Reyes-Ortiz. Human Activity Recognition on Smartphones using a Multiclass Hardware-Friendly Support Vector Machine. International Workshop of Ambient Assisted Living (IWAAL 2012). Vitoria-Gasteiz, Spain. Dec 2012
+
+## Codebook
+
+### Identifiers
+
+* `id` - ID of the experiment participant, integer, ranges from 1 to 30
+* `activity_name` - Type of activity performed by the participant, string with 6 possible values
+
+### Activity Labels
+
+* `WALKING` (value `1`): subject was walking during the test
+* `WALKING_UPSTAIRS` (value `2`): subject was walking up a staircase during the test
+* `WALKING_DOWNSTAIRS` (value `3`): subject was walking down a staircase during the test
+* `SITTING` (value `4`): subject was sitting during the test
+* `STANDING` (value `5`): subject was standing during the test
+* `LAYING` (value `6`): subject was laying down during the test
+
+### Measurements
+
+__Varible names' breakdown:__
+
+* `t` = time domain signals
+* `f` = frequency-domain signals, calculated with Fast Fourier Transform (FFT)
+* `BodyAcc` = estimated body acceleration signals (in standard gravity units 'g')
+* `GravityAcc` = estimated gravity acceleration signals (in standard gravity units 'g')
+* `BodyGyro` = angular velocity (in radians/second)
+* `Jerk` = jerk measurements, calculated from acceleration and angular velocity in time
+* `Mag` = magnitude of signals, calculated with the Euclidean norm
+* `Mean` = weighted average
+* `Std` = standard deviation
+* `Freq` = frequency component
+* `X Y Z` = X, Y and Z directions
+
+__List of variables:__
+
+* `tBodyAccMeanX`
+* `tBodyAccMeanY`
+* `tBodyAccMeanZ`
+* `tBodyAccStdX`
+* `tBodyAccStdY`
+* `tBodyAccStdZ`
+* `tGravityAccMeanX`
+* `tGravityAccMeanY`
+* `tGravityAccMeanZ`
+* `tGravityAccStdX`
+* `tGravityAccStdY`
+* `tGravityAccStdZ`
+* `tBodyAccJerkMeanX`
+* `tBodyAccJerkMeanY`
+* `tBodyAccJerkMeanZ`
+* `tBodyAccJerkStdX`
+* `tBodyAccJerkStdY`
+* `tBodyAccJerkStdZ`
+* `tBodyGyroMeanX`
+* `tBodyGyroMeanY`
+* `tBodyGyroMeanZ`
+* `tBodyGyroStdX`
+* `tBodyGyroStdY`
+* `tBodyGyroStdZ`
+* `tBodyGyroJerkMeanX`
+* `tBodyGyroJerkMeanY`
+* `tBodyGyroJerkMeanZ`
+* `tBodyGyroJerkStdX`
+* `tBodyGyroJerkStdY`
+* `tBodyGyroJerkStdZ`
+* `tBodyAccMagMean`
+* `tBodyAccMagStd`
+* `tGravityAccMagMean`
+* `tGravityAccMagStd`
+* `tBodyAccJerkMagMean`
+* `tBodyAccJerkMagStd`
+* `tBodyGyroMagMean`
+* `tBodyGyroMagStd`
+* `tBodyGyroJerkMagMean`
+* `tBodyGyroJerkMagStd`
+* `fBodyAccMeanX`
+* `fBodyAccMeanY`
+* `fBodyAccMeanZ`
+* `fBodyAccStdX`
+* `fBodyAccStdY`
+* `fBodyAccStdZ`
+* `fBodyAccMeanFreqX`
+* `fBodyAccMeanFreqY`
+* `fBodyAccMeanFreqZ`
+* `fBodyAccJerkMeanX`
+* `fBodyAccJerkMeanY`
+* `fBodyAccJerkMeanZ`
+* `fBodyAccJerkStdX`
+* `fBodyAccJerkStdY`
+* `fBodyAccJerkStdZ`
+* `fBodyAccJerkMeanFreqX`
+* `fBodyAccJerkMeanFreqY`
+* `fBodyAccJerkMeanFreqZ`
+* `fBodyGyroMeanX`
+* `fBodyGyroMeanY`
+* `fBodyGyroMeanZ`
+* `fBodyGyroStdX`
+* `fBodyGyroStdY`
+* `fBodyGyroStdZ`
+* `fBodyGyroMeanFreqX`
+* `fBodyGyroMeanFreqY`
+* `fBodyGyroMeanFreqZ`
+* `fBodyAccMagMean`
+* `fBodyAccMagStd`
+* `fBodyAccMagMeanFreq`
+* `fBodyBodyAccJerkMagMean`
+* `fBodyBodyAccJerkMagStd`
+* `fBodyBodyAccJerkMagMeanFreq`
+* `fBodyBodyGyroMagMean`
+* `fBodyBodyGyroMagStd`
+* `fBodyBodyGyroMagMeanFreq`
+* `fBodyBodyGyroJerkMagMean`
+* `fBodyBodyGyroJerkMagStd`
+* `fBodyBodyGyroJerkMagMeanFreq`

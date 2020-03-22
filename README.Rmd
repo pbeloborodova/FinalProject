@@ -1,0 +1,226 @@
+---
+title: "README"
+output: 
+  html_document: 
+    fig_height: 4
+    highlight: pygments
+    theme: spacelab
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Preliminary notes
+
+As a reminder, in this assignment we have to create one R script called run_analysis.R that does the following:
+1. Merges the training and the test sets to create one data set.
+2. Extracts only the measurements on the mean and standard deviation for each measurement.
+3. Uses descriptive activity names to name the activities in the data set
+4. Appropriately labels the data set with descriptive variable names.
+5. From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
+
+The script consists of two parts: Setup and Assignment. In the Setup part I load packages and data and remove all auxiliary objects from the environment. In the Assignment part I walk throuh every step of the assignment.
+
+# Setup
+
+## Change settings and load packages
+
+I am setting stringsAsFactors to FALSE as a default setting to avoid problems with character variables (such as the list of features) being converted to factors. Also loading dplyr package which I am going to use for data manipulation.
+
+```{r load-packages, message = FALSE}
+options(stringsAsFactors = FALSE)
+library(dplyr)
+```
+
+## Load data
+
+```{r load-data}
+# Download data archive
+url <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
+download.file(url, "data.zip", method = "curl")
+```
+
+## Explore contents of archive
+
+```{r explore-data}
+# Make a vector of files in archive
+contents <- unzip("data.zip", list = TRUE)[,1]  # Need only 1st column with file names
+print(contents)
+```
+
+## Load data files from archive
+
+Loading files from main folder, test and train folders separately. Using the gsub function to create a vector of file names which I am using as data frame names in the for loop.
+
+### Main folder
+
+```{r load-main-folder}
+# Create a vector of file paths
+main_contents <- contents[1:2]
+
+# Create a vector of file names
+main_names <- gsub("UCI HAR Dataset/|.txt", "", contents[1:2])
+
+# Create separate data frames for data files in the folder
+for (i in 1:2) {
+  conn <- unz("data.zip", main_contents[i])
+  df <- read.table(conn, header = F, sep = " ")
+  assign(main_names[i], df)
+}
+```
+
+### Test folder
+
+```{r load-test-folder}
+# Create a vector of file paths
+test_contents <- contents[16:18]
+
+# Create a vector of file names
+test_names <- gsub("UCI HAR Dataset/test/|.txt", "", contents[16:18])
+
+# Create separate data frames for data files in the folder
+for (i in 1:3) {
+  conn <- unz("data.zip", test_contents[i])
+  df <- read.table(text = gsub("  ", " ", readLines(conn)))
+  assign(test_names[i], df)
+}
+```
+
+### Train folder
+
+```{r load-train-folder}
+# Create a vector of file paths
+test_contents <- contents[16:18]
+
+# Create a vector of file names
+test_names <- gsub("UCI HAR Dataset/test/|.txt", "", contents[16:18])
+
+# Create separate data frames for data files in the folder
+for (i in 1:3) {
+  conn <- unz("data.zip", test_contents[i])
+  df <- read.table(text = gsub("  ", " ", readLines(conn)))
+  assign(test_names[i], df)
+}
+```
+
+### Remove auxiliary objects from the environment
+
+```{r tidy-environment1}
+rm(df, conn, i, url)
+rm(list=ls(pattern="contents"))
+rm(list=ls(pattern="names"))
+```
+
+This, we now have all necessary objects in the environment and removed exrta object to free the memory.
+
+# Assignment
+
+I found it more efficient to do part 2 (extract only the measurements on the mean and standard deviation for each measurement), and then part 1 (merge the training and the test sets to create one data set). The rest is done as indicated in the assignment.
+
+## Part 2
+
+### Create a list of mean and std variables
+
+```{r select-variables}
+selected_features <- features[grep("mean|std", features$V2), ]
+
+# Make sure there are no duplicated names
+sum(duplicated(selected_features[,2]))
+```
+
+### Subset test and train data
+
+```{r subset-test-train}
+selected_X_test <- X_test[,selected_features[,1]]
+selected_X_train <- X_train[,selected_features[,1]]
+
+# Change column names to features
+colnames(selected_X_test) <- selected_features[,2]
+colnames(selected_X_train) <- selected_features[,2]
+```
+
+## Part 1
+
+### Attach participants' numbers and activity labels
+
+```{r attach-id-activity}
+# Test data
+subject_test <- rename(subject_test, id = V1)
+y_test <- rename(y_test, activity_number = V1)
+selected_X_test <- cbind(subject_test, y_test, selected_X_test)
+
+# Train data
+subject_train <- rename(subject_train, id = V1)
+y_train <- rename(y_train, activity_number = V1)
+selected_X_train <- cbind(subject_train, y_train, selected_X_train)
+```
+
+### Merge test and train data
+
+```{r merge-test-train}
+selected_X <- rbind(selected_X_test, selected_X_train)
+```
+
+### Remove data frames no longer needed
+
+```{r tidy-environment2}
+rm(selected_X_test, selected_X_train,
+   features, selected_features,
+   subject_test, subject_train,
+   X_test, X_train,
+   y_test, y_train)
+```
+
+## Part 3
+
+### Create activity names variable
+
+```{r add-activity-names}
+# Duplicate activity number variable
+selected_X$activity_name <- selected_X$activity_number
+
+# Change numbers to names
+selected_X$activity_name[selected_X$activity_number %in% activity_labels[,1]] <-
+  activity_labels[,2][match(selected_X$activity_number, activity_labels[,1])]
+
+# Remove data frame no longer needed
+rm(activity_labels)
+```
+
+### Part 4
+
+Following the recommendation from [this thread](https://www.coursera.org/learn/data-cleaning/discussions/weeks/4/threads/7yTCGiWNEeiGYRJR35RvhA) in the course forum, I believe that variable names from the features file are already descriptive enough to indicate what they mean if the user made themself familiar with the study by reading this README and checking the codebook. Making them more human-readable would greatly increase character count and make them difficult to work with.
+
+However, I will remove brackets and dashes from variable names because they might later cause problems with the analysis.
+
+### Edit variable names
+
+```{r remove-brackets}
+colnames(selected_X) <- gsub("\\(\\)|-", "", colnames(selected_X))
+colnames(selected_X) <- gsub('mean', 'Mean', colnames(selected_X))
+colnames(selected_X) <- gsub("std", "Std", colnames(selected_X))
+```
+
+## Part 5
+
+In order to create a tidy data set with means of variables grouped by subject and activity, I am going to take the narrow data set approach which corresponds to the assignemnt requirements according to [this discussion](https://www.coursera.org/learn/data-cleaning/discussions/forums/h8cjA78DEeWtFA5RrsHG3Q/threads/-Cjtsip5Eea0DRLrrvCCTQ) in the course forums. Additionally, from my own research experience, I find it much easier to work with narrow data in terms of analysis and visualizetion.
+
+### Create new data frame
+
+```{r make-tidy-data}
+tidy_data <-
+  selected_X[,-2] %>%
+  group_by(id, activity_name) %>%
+  summarize_each(funs(mean))
+```
+
+### Save data in .txt file
+
+```{r save-data}
+write.table(tidy_data, "tidy_data.txt", sep = " ", dec = ".",
+            row.names = TRUE, col.names = TRUE)
+```
+
+Congrats everyone on passing the course! :)
+
